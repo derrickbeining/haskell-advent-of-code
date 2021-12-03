@@ -12,7 +12,7 @@ import qualified Data.Vector as Vec
 import qualified Util.Util as U
 
 import qualified Program.RunDay as R (runDay, Day)
-import Data.Attoparsec.Text
+import Data.Attoparsec.Text ( Parser )
 import Data.Void
 {- ORMOLU_ENABLE -}
 
