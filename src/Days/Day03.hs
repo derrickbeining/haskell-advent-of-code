@@ -1,21 +1,13 @@
 module Days.Day03 (runDay, binToDec) where
 
-import Data.List ()
-import Data.Map.Strict (Map)
-import qualified Data.Map.Strict as Map
-import Data.Maybe (fromMaybe)
-import Data.Set (Set)
-import qualified Data.Set as Set
-import Data.Vector (Vector, (!?), (//))
-import qualified Data.Vector as Vec
-import qualified Util.Util as U
-
 import Data.Attoparsec.Text (Parser)
 import qualified Data.Attoparsec.Text as Parser
 import Data.Function ((&))
 import Data.Functor ((<&>))
+import Data.Maybe (fromMaybe)
 import qualified Data.Maybe as Maybe
-import Data.Void (Void)
+import Data.Vector (Vector, (!?), (//))
+import qualified Data.Vector as Vec
 import qualified Program.RunDay as R (Day, runDay)
 
 runDay :: R.Day
@@ -24,8 +16,8 @@ runDay = R.runDay inputParser partA partB
 ------------ PARSER ------------
 inputParser :: Parser Input
 inputParser =
-  Parser.sepBy binParser Parser.endOfLine
-    <&> Vec.fromList
+  Vec.fromList
+    <$> Parser.sepBy binParser Parser.endOfLine
  where
   binParser =
     fmap Vec.fromList $
@@ -37,6 +29,7 @@ inputParser =
 
 ------------ TYPES ------------
 type Binary = Vector Bool
+
 type Input = Vector Binary
 
 type OutputA = Int
@@ -51,19 +44,19 @@ binToDec = Vec.ifoldr convert 0 . Vec.reverse
   convert ix bit acc =
     acc + ((2 ^ ix) * fromEnum bit)
 
-calculateMostCommonBits :: Vector Binary -> Vector Bool
+calculateMostCommonBits :: Vector Binary -> Binary
 calculateMostCommonBits bins =
-  Vec.ifoldl' reduce Vec.empty bins
+  Vec.ifoldl' groupBitsByIndex Vec.empty bins
     <&> Vec.partition id
     <&> (\(ones, zeros) -> length ones >= length zeros)
  where
-  reduce :: Vector Binary -> Int -> Binary -> Vector Binary
-  reduce acc binsIx bin
+  groupBitsByIndex :: Vector Binary -> Int -> Binary -> Vector Binary
+  groupBitsByIndex acc binsIx bin
     | null acc = bin <&> Vec.singleton
-    | otherwise = Vec.ifoldl' go acc bin
+    | otherwise = Vec.ifoldl' appendBitsByIx acc bin
 
-  go :: Vector Binary -> Int -> Bool -> Vector Binary
-  go accum binIx bit =
+  appendBitsByIx :: Vector Binary -> Int -> Bool -> Vector Binary
+  appendBitsByIx accum binIx bit =
     accum // [(binIx, appended)]
    where
     appended =
@@ -74,8 +67,10 @@ partA :: Input -> OutputA
 partA bins =
   binToDec gammaRate * binToDec epsilonRate
  where
-  gammaRate = calculateMostCommonBits bins
-  epsilonRate = not <$> gammaRate
+  gammaRate =
+    calculateMostCommonBits bins
+  epsilonRate =
+    not <$> gammaRate
 
 ------------ PART B ------------
 partB :: Input -> OutputB
@@ -83,9 +78,12 @@ partB bins =
   fromMaybe 0 $ Just (*) <*> oxyGenRating <*> c02ScrubRating
  where
   oxyGenRating =
-    binToDec <$> findRating calculateMostCommonBits bins 0
+    binToDec
+      <$> findRating calculateMostCommonBits bins 0
+
   c02ScrubRating =
-    binToDec <$> findRating (fmap not . calculateMostCommonBits) bins 0
+    binToDec
+      <$> findRating (fmap not . calculateMostCommonBits) bins 0
 
   findRating :: (Vector Binary -> Binary) -> Vector Binary -> Int -> Maybe Binary
   findRating method bins ix =
