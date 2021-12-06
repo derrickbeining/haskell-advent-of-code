@@ -75,6 +75,7 @@ library
       DeriveFunctor
       DeriveFoldable
       DeriveTraversable
+      GeneralizedNewtypeDeriving
   build-depends:
       ansi-terminal
     , attoparsec

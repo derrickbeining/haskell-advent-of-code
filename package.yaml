@@ -51,6 +51,7 @@ library:
     - DeriveFunctor
     - DeriveFoldable
     - DeriveTraversable
+    - GeneralizedNewtypeDeriving
 
 executables:
   aoc-template-exe:
