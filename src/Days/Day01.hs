@@ -1,23 +1,11 @@
 module Days.Day01 (runDay) where
 
-{- ORMOLU_DISABLE -}
-import Data.List
-import Data.Map.Strict (Map)
-import qualified Data.Map.Strict as Map
-import Data.Maybe
-import Data.Set (Set)
-import qualified Data.Set as Set
-import Data.Vector (Vector)
-import qualified Data.Vector as Vec
-import qualified Util.Util as U
-import qualified Data.Monoid as Monoid
-import qualified Program.RunDay as R (runDay, Day)
-import Data.Attoparsec.Text ( Parser )
+import Data.Attoparsec.Text (Parser)
 import qualified Data.Attoparsec.Text as Parser
-import Data.Void
 import Data.Function ((&))
 import Data.Functor ((<&>))
-{- ORMOLU_ENABLE -}
+import Data.List (foldl')
+import qualified Program.RunDay as R (Day, runDay)
 
 runDay :: R.Day
 runDay = R.runDay inputParser partA partB
@@ -64,8 +52,8 @@ partB = go 0
  where
   go count depths =
     case depths of
-      a : b : c : d : tail ->
+      a : b : c : d : rest ->
         if b + c + d > a + b + c
-          then go (count + 1) (b : c : d : tail)
-          else go count (b : c : d : tail)
+          then go (count + 1) (b : c : d : rest)
+          else go count (b : c : d : rest)
       _ -> count
