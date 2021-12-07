@@ -195,24 +195,24 @@ partB (bingoNums, bingoBoards) =
     state@BingoState{winners, numbers, boards} <- MonadState.get
 
     case (numbers, boards) of
+      -- No remaining numbers, game over, check if winner
       ([], _) -> case winners !? (length winners - 1) of
         Nothing -> pure $ FinalScore 0
         Just (num, lastWinner) -> pure $ calculateFinalScore num lastWinner
-      --
-      (_, Nothing) -> case winners !? (length winners - 1) of
-        Nothing -> pure $ FinalScore 0
-        Just (num, lastWinner) -> pure $ calculateFinalScore num lastWinner
-      --
+      -- No remaining boards, same logic as no remaining numbers; recur
+      (_, Nothing) -> do
+        MonadState.put $ state{numbers = []}
+        bingoApp
+      -- Draw next number, update board, find winners, update state, and recur
       (numberDrawn : remainingNumbers, Just boards') -> do
         let updatedBoards = updateBoards numberDrawn boards'
             (newWinners, notWinners) = NEL.partition isWinner updatedBoards
 
-        MonadState.put
-          ( state
-              { winners = winners <> ((numberDrawn,) <$> Vec.fromList newWinners)
-              , numbers = remainingNumbers
-              , boards = NEL.nonEmpty notWinners
-              }
-          )
+        MonadState.put $
+          state
+            { winners = winners <> ((numberDrawn,) <$> Vec.fromList newWinners)
+            , numbers = remainingNumbers
+            , boards = NEL.nonEmpty notWinners
+            }
 
         bingoApp
