@@ -118,9 +118,6 @@ data BingoState = BingoState
 type BingoApp =
   State BingoState FinalScore
 
-runBingoApp :: BingoState -> BingoApp -> FinalScore
-runBingoApp init app = MonadState.evalState app init
-
 updateBoards :: Word -> BingoBoards -> BingoBoards
 updateBoards numberDrawn =
   fmap (updateRows numberDrawn)
