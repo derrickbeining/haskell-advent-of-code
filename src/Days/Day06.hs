@@ -1,39 +1,40 @@
 module Days.Day06 (runDay) where
 
-{- ORMOLU_DISABLE -}
-import Data.List
-import Data.Map.Strict (Map)
-import qualified Data.Map.Strict as Map
-import Data.Maybe
-import Data.Set (Set)
-import qualified Data.Set as Set
-import Data.Vector (Vector)
-import qualified Data.Vector as Vec
-import qualified Util.Util as U
-
-import qualified Program.RunDay as R (runDay, Day)
 import Data.Attoparsec.Text
-import Data.Void
-{- ORMOLU_ENABLE -}
+import qualified Program.RunDay as R (Day, runDay)
 
 runDay :: R.Day
 runDay = R.runDay inputParser partA partB
 
 ------------ PARSER ------------
 inputParser :: Parser Input
-inputParser = error "Not implemented yet!"
+inputParser =
+  (truncate <$> double) `sepBy` char ','
 
 ------------ TYPES ------------
-type Input = Void
+type Input = [Word]
 
-type OutputA = Void
+type OutputA = Word
 
-type OutputB = Void
+type OutputB = Word
 
 ------------ PART A ------------
+lanternfish :: Word -> [Word] -> [Word]
+lanternfish durationInDays fishes =
+  if durationInDays > 0
+    then lanternfish (durationInDays - 1) nextFishes
+    else fishes
+ where
+  nextFishes = foldr thePassageOfTime [] fishes
+
+  thePassageOfTime :: Word -> [Word] -> [Word]
+  thePassageOfTime 0 nextFishesSorFar = 8 : 6 : nextFishesSorFar
+  thePassageOfTime fish nextFishesSorFar = (fish - 1) : nextFishesSorFar
+
 partA :: Input -> OutputA
-partA = error "Not implemented yet!"
+partA = fromIntegral . length . lanternfish 80
 
 ------------ PART B ------------
 partB :: Input -> OutputB
-partB = error "Not implemented yet!"
+partB = fromIntegral . length . lanternfish 256
+
