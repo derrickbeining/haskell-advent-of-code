@@ -82,10 +82,14 @@ library
     , base >=4.7 && <5
     , containers
     , directory
+    , hashtables
+    , ilist
     , mtl
     , optparse-applicative
     , parser-combinators
     , pointedlist
+    , primitive
+    , repa
     , text
     , time
     , vector
@@ -121,11 +125,15 @@ executable aoc-template-exe
     , base >=4.7 && <5
     , containers
     , directory
+    , hashtables
     , haskell-advent-of-code
+    , ilist
     , mtl
     , optparse-applicative
     , parser-combinators
     , pointedlist
+    , primitive
+    , repa
     , text
     , time
     , vector

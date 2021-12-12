@@ -19,18 +19,22 @@ extra-source-files:
 description: A template for Advent of Code projects in Haskell
 
 dependencies:
-  - base >= 4.7 && < 5
-  - time
   - ansi-terminal
+  - attoparsec
+  - base >= 4.7 && < 5
+  - containers
   - directory
+  - hashtables
+  - ilist
+  - mtl
   - optparse-applicative
   - parser-combinators
-  - attoparsec
-  - containers
-  - text
-  - mtl
-  - vector
   - pointedlist
+  - primitive
+  - repa
+  - text
+  - time
+  - vector
 
 library:
   source-dirs: src
